@@ -1,9 +1,10 @@
-import express from 'express';
+import express, { Response } from 'express';
 import Shift from '../models/Shift.js';
 import Order from '../models/Order.js';
-import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { authenticate, checkPermission, AuthRequest } from '../middleware/auth.js';
 import { getTenantId } from '../lib/tenant.js';
 import { emitToTenant } from '../lib/socketService.js';
+import AuditLog from '../models/AuditLog.js';
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.get('/current', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Open a new shift
-router.post('/open', authenticate, async (req: AuthRequest, res) => {
+router.post('/open', authenticate, checkPermission(undefined, ['MANAGER', 'STAFF']), async (req: AuthRequest, res) => {
   try {
     const { openingBalance } = req.body;
     const tenantId = req.user.tenantId; // Use user's own tenantId record for security
@@ -54,7 +55,15 @@ router.post('/open', authenticate, async (req: AuthRequest, res) => {
 
     await shift.save();
 
-    // Carry over active orders (not COMPLETED) from previous shifts to this new one
+    // Audit log
+    await AuditLog.create({
+      userId,
+      action: 'SHIFT_OPEN',
+      entity: 'Shift',
+      entityId: shift._id,
+      tenantId,
+      details: { openingBalance }
+    });
     await Order.updateMany(
       { tenantId, status: { $ne: 'COMPLETED' } },
       { $set: { shiftId: shift._id } }
@@ -133,7 +142,7 @@ router.get('/summary', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Close shift
-router.post('/close', authenticate, async (req: AuthRequest, res) => {
+router.post('/close', authenticate, checkPermission(undefined, ['MANAGER', 'STAFF']), async (req: AuthRequest, res) => {
   try {
     const { closingBalance } = req.body;
     const tenantId = req.user.tenantId; // Use user's own tenantId record for security
@@ -203,7 +212,22 @@ router.post('/close', authenticate, async (req: AuthRequest, res) => {
     shift.notes = req.body.notes || '';
     
     await shift.save();
-    
+
+    // Audit log
+    await AuditLog.create({
+      userId: req.user._id,
+      action: 'SHIFT_CLOSE',
+      entity: 'Shift',
+      entityId: shift._id,
+      tenantId,
+      details: { 
+        totalSales, 
+        cashSales, 
+        closingBalance,
+        expectedBalance: shift.openingBalance + cashSales
+      }
+    });
+
     emitToTenant(tenantId, 'shift:update', { status: 'CLOSED', shiftId: shift._id });
     
     res.json(shift);
@@ -214,7 +238,7 @@ router.post('/close', authenticate, async (req: AuthRequest, res) => {
 });
 
 // Get all shifts (history)
-router.get('/', authenticate, async (req: AuthRequest, res) => {
+router.get('/', authenticate, checkPermission('REPORT_VIEW', ['MANAGER']), async (req: AuthRequest, res) => {
   try {
     const { status, limit = 50, offset = 0, tenantId: targetTenantId } = req.query;
     

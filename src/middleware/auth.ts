@@ -67,3 +67,19 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     res.status(401).json({ error: 'Invalid token' });
   }
 };
+
+export const checkPermission = (permission?: string, roles?: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    if (req.user.role === 'ADMIN') return next();
+
+    if (roles && roles.includes(req.user.role)) return next();
+
+    if (permission && req.user.permissions?.includes(permission)) return next();
+
+    return res.status(403).json({ error: 'Permission denied' });
+  };
+};

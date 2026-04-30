@@ -437,7 +437,8 @@ app.delete('/api/admin/users/:id', authenticate, async (req: AuthRequest, res) =
 });
 // --------------------------------
 
-app.post('/api/dev/seed', async (req, res) => {
+app.post('/api/dev/seed', authenticate, async (req: AuthRequest, res) => {
+  if (req.user?.role !== 'ADMIN') return res.status(403).json({ error: 'Admin only' });
   try {
     const { tenantId } = req.body;
     if (!tenantId) return res.status(400).json({ error: 'Tenant ID required' });
@@ -467,7 +468,7 @@ app.post('/api/dev/seed', async (req, res) => {
     }
 
     res.json({ success: true, message: 'Data seeded successfully' });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Seed failed:', err);
     res.status(500).json({ error: 'Seed failed' });
   }
@@ -476,10 +477,11 @@ app.post('/api/dev/seed', async (req, res) => {
 // Final catch-all for errors
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('[Global Error Handler]', err);
+  const isProd = process.env.NODE_ENV === 'production';
   res.status(500).json({ 
     error: 'Internal Server Error', 
-    message: err.message,
-    details: err.stack 
+    message: isProd ? 'Đã có lỗi xảy ra trên hệ thống.' : err.message,
+    details: isProd ? undefined : err.stack 
   });
 });
 

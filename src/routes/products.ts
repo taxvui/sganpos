@@ -1,7 +1,7 @@
 import express from 'express';
 import Product from '../models/Product.js';
 import { getTenantId } from '../lib/tenant.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, checkPermission } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/products - Create a new product or bulk products (Auth required)
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, checkPermission('MENU_MANAGE', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
     
@@ -42,12 +42,15 @@ router.post('/', authenticate, async (req, res) => {
 });
 
 // PUT /api/products/:id - Update an existing product (Auth required)
-router.put('/:id', authenticate, async (req, res) => {
+router.put('/:id', authenticate, checkPermission('MENU_MANAGE', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
+    const updateData = { ...req.body };
+    delete updateData.tenantId; // Prevent changing tenantId
+    
     const product = await Product.findOneAndUpdate(
       { _id: req.params.id, tenantId },
-      req.body,
+      { $set: updateData },
       { new: true }
     );
     if (!product) return res.status(404).json({ error: 'Product not found' });
@@ -58,7 +61,7 @@ router.put('/:id', authenticate, async (req, res) => {
 });
 
 // DELETE /api/products/:id - Delete a product (Auth required)
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', authenticate, checkPermission('MENU_MANAGE', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
     const product = await Product.findOneAndDelete({ _id: req.params.id, tenantId });

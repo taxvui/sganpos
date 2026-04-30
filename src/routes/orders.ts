@@ -4,12 +4,19 @@ import Shift from '../models/Shift.js';
 import Table from '../models/Table.js';
 import { getTenantId } from '../lib/tenant.js';
 import { emitToTenant } from '../lib/socketService.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, checkPermission } from '../middleware/auth.js';
+import rateLimit from 'express-rate-limit';
+
+const orderCreateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 50, // limit each IP to 50 orders per 5 minutes
+  message: { error: 'Gửi đơn hàng quá nhanh. Vui lòng đợi 5 phút.' }
+});
 
 const router = express.Router();
 
 // GET /api/orders/reports - Statistical reports (Auth required)
-router.get('/reports', authenticate, async (req, res) => {
+router.get('/reports', authenticate, checkPermission('REPORT_VIEW', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
     const { startDate, endDate } = req.query;
@@ -121,11 +128,63 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // POST /api/orders - Create a new order
-router.post('/', async (req, res) => {
+router.post('/', orderCreateLimiter, async (req, res) => {
   try {
     const tenantId = getTenantId();
     const orderNumber = req.body.orderNumber || req.body.orderCode || `ORD-${Date.now().toString().slice(-6)}`;
     
+    // 🔥 SECURITY: Recalculate total on server to prevent price manipulation
+    const Product = (await import('../models/Product.js')).default;
+    const items = req.body.items || [];
+    let subtotal = 0;
+
+    for (const item of items) {
+      const product = await Product.findOne({ _id: item.productId, tenantId });
+      if (!product) {
+        return res.status(400).json({ error: `Sản phẩm ${item.name} không tồn tại hoặc đã bị xóa.` });
+      }
+
+      // Base price
+      let itemPrice = product.basePrice;
+      
+      // Size price
+      if (item.size) {
+        const sizeOption = product.sizes.find((s: any) => s.name === item.size);
+        if (sizeOption) itemPrice = sizeOption.price;
+      }
+
+      // Toppings price
+      let toppingsPrice = 0;
+      if (item.toppings && Array.isArray(item.toppings)) {
+        for (const topping of item.toppings) {
+          const toppingInDb = product.toppings.find((t: any) => t.name === topping.name);
+          if (toppingInDb) {
+            toppingsPrice += toppingInDb.price;
+          }
+        }
+      }
+
+      const calculatedItemPrice = itemPrice + toppingsPrice;
+      
+      // Update item price to server price just in case
+      item.price = calculatedItemPrice;
+      subtotal += calculatedItemPrice * item.quantity;
+    }
+
+    // Apply Discount
+    let discountAmount = 0;
+    const { discountType, discountValue = 0 } = req.body;
+    if (discountType === 'PERCENTAGE') {
+      discountAmount = Math.round((subtotal * discountValue) / 100);
+    } else if (discountType === 'FIXED') {
+      discountAmount = discountValue;
+    }
+
+    // Apply Tax (if applicable)
+    const taxRate = req.body.taxRate || 0;
+    const taxAmount = Math.round(((subtotal - discountAmount) * taxRate) / 100);
+    const total = subtotal - discountAmount + taxAmount;
+
     // Find current open shift for this tenant
     let shiftId = req.body.shiftId;
     if (!shiftId) {
@@ -144,6 +203,10 @@ router.post('/', async (req, res) => {
       orderNumber, 
       tenantId, 
       shiftId, 
+      subtotal,
+      taxAmount,
+      discountAmount,
+      total,
       status: req.body.status || 'PENDING', 
       paymentStatus: req.body.paymentStatus || 'UNPAID' 
     };
@@ -180,7 +243,7 @@ router.post('/', async (req, res) => {
 });
 
 // PATCH /api/orders/:id - Update order status (Auth required)
-router.patch('/:id', authenticate, async (req, res) => {
+router.patch('/:id', authenticate, checkPermission('POS_EDIT', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
     const updateData: any = { ...req.body };
@@ -216,7 +279,7 @@ router.patch('/:id', authenticate, async (req, res) => {
 });
 
 // DELETE /api/orders/:id - Cancel/Delete order (Auth required)
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', authenticate, checkPermission('POS_DELETE', ['MANAGER']), async (req, res) => {
   try {
     const tenantId = getTenantId();
     const order = await Order.findOneAndDelete({ _id: req.params.id, tenantId });

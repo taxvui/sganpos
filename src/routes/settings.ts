@@ -1,7 +1,8 @@
-import express from 'express';
+import express, { Response } from 'express';
 import Settings from '../models/Settings.js';
 import { getTenantId } from '../lib/tenant.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, checkPermission, AuthRequest } from '../middleware/auth.js';
+import AuditLog from '../models/AuditLog.js';
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ router.get('/public/brand', async (req, res) => {
 });
 
 // PUT /api/settings - Update settings (Auth required)
-router.put('/', authenticate, async (req, res) => {
+router.put('/', authenticate, checkPermission('SETTINGS_MANAGE', ['MANAGER']), async (req: AuthRequest, res: express.Response) => {
   try {
     const tenantId = getTenantId();
     const updateData = req.body;
@@ -53,6 +54,15 @@ router.put('/', authenticate, async (req, res) => {
       { $set: updateData },
       { returnDocument: 'after', upsert: true }
     );
+
+    // Audit log
+    await AuditLog.create({
+      userId: req.user._id,
+      action: 'SETTINGS_UPDATE',
+      entity: 'Settings',
+      tenantId,
+      details: updateData
+    });
     
     res.json(settings);
   } catch (error) {
