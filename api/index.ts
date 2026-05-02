@@ -14,6 +14,10 @@ import tableRoutes from '../src/routes/tables.js';
 import settingsRoutes from '../src/routes/settings.js';
 import authRoutes from '../src/routes/auth.js';
 import shiftRoutes from '../src/routes/shifts.js';
+import dashboardRoutes from '../src/routes/dashboard.js';
+import logRoutes from '../src/routes/logs.js';
+import categoryRoutes from '../src/routes/categories.js';
+import userRoutes from '../src/routes/users.js';
 
 const app = express();
 
@@ -95,6 +99,10 @@ apiRouter.use('/products', productRoutes);
 apiRouter.use('/orders', orderRoutes);
 apiRouter.use('/tables', tableRoutes);
 apiRouter.use('/settings', settingsRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/logs', logRoutes);
+apiRouter.use('/categories', categoryRoutes);
+apiRouter.use('/users', userRoutes);
 
 // Legacy Print API Compat
 apiRouter.post('/print/test-print', (req, res) => {
@@ -124,7 +132,7 @@ apiRouter.get('/debug-settings', async (req, res) => {
 });
 
 // --- Admin & Dev APIs ---
-apiRouter.get('/dev/logs', (req, res) => {
+apiRouter.get('/admin/system-logs', (req, res) => {
   res.json(systemLogs.slice().reverse());
 });
 
@@ -194,6 +202,20 @@ apiRouter.delete('/admin/users/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Failed' });
   }
+});
+
+// Final catch-all for errors
+apiRouter.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(`[${new Date().toISOString()}] GLOBAL ERROR:`, err);
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({ 
+    success: false,
+    error: {
+      code: status,
+      message: err.message || 'Internal Server Error',
+      path: req.originalUrl
+    }
+  });
 });
 
 // Mounting configuration for Vercel

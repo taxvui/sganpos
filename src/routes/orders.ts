@@ -242,6 +242,18 @@ router.post('/', orderCreateLimiter, async (req, res) => {
   }
 });
 
+// GET /api/orders/:id - Get single order
+router.get('/:id', authenticate, async (req, res) => {
+  try {
+    const tenantId = getTenantId();
+    const order = await Order.findOne({ _id: req.params.id, tenantId }).populate('tableId shiftId');
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch order' });
+  }
+});
+
 // PATCH /api/orders/:id - Update order status (Auth required)
 router.patch('/:id', authenticate, checkPermission('POS_EDIT', ['MANAGER']), async (req, res) => {
   try {
@@ -275,6 +287,42 @@ router.patch('/:id', authenticate, checkPermission('POS_EDIT', ['MANAGER']), asy
     res.json(order);
   } catch (error) {
     res.status(400).json({ error: 'Failed to update order' });
+  }
+});
+
+// PATCH /api/orders/:id/payment - Mark order as paid
+router.patch('/:id/payment', authenticate, checkPermission('POS_EDIT', ['MANAGER']), async (req, res) => {
+  try {
+    const tenantId = getTenantId();
+    const { paymentMethod, amountPaid } = req.body;
+    
+    const order = await Order.findOneAndUpdate(
+      { _id: req.params.id, tenantId },
+      { 
+        $set: { 
+          paymentStatus: 'PAID', 
+          paymentMethod: paymentMethod || 'CASH',
+          status: 'COMPLETED' // Auto complete on payment
+        } 
+      },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    // Free table if applicable
+    if (order.tableId) {
+      await Table.findOneAndUpdate(
+        { _id: order.tableId, tenantId },
+        { $set: { status: 'EMPTY', currentOrderId: null } }
+      );
+      emitToTenant(tenantId, 'table:update', { _id: order.tableId, status: 'EMPTY' });
+    }
+
+    emitToTenant(tenantId, 'order:update', order);
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(400).json({ error: 'Payment processing failed' });
   }
 });
 

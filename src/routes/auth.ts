@@ -317,6 +317,54 @@ router.get('/me', authenticate, (req: AuthRequest, res) => {
   }
 });
 
+// Update Profile
+router.put('/profile', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) return res.status(404).json({ error: 'Người dùng không tồn tại' });
+
+    if (name) user.name = name;
+    if (email && email !== user.email) {
+      // Check if email already taken in tenant
+      const existing = await User.findOne({ email, tenantId: user.tenantId, _id: { $ne: user._id } });
+      if (existing) return res.status(400).json({ error: 'Email đã được sử dụng' });
+      user.email = email;
+    }
+    if (phone && phone !== user.phone) {
+      const existing = await User.findOne({ phone, tenantId: user.tenantId, _id: { $ne: user._id } });
+      if (existing) return res.status(400).json({ error: 'Số điện thoại đã được sử dụng' });
+      user.phone = phone;
+    }
+
+    await user.save();
+    res.json({ message: 'Cập nhật thông tin thành công', user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role } });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Cập nhật thất bại', details: error.message });
+  }
+});
+
+// Change Password
+router.put('/change-password', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) return res.status(404).json({ error: 'Người dùng không tồn tại' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Mật khẩu hiện tại không chính xác' });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: 'Đổi mật khẩu thành công' });
+  } catch (error: any) {
+    res.status(500).json({ error: 'Đổi mật khẩu thất bại', details: error.message });
+  }
+});
+
 // Check subdomain availability
 router.get('/check-availability', async (req, res) => {
   try {

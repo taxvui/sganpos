@@ -25,6 +25,10 @@ import tableRoutes from './src/routes/tables.js';
 import settingsRoutes from './src/routes/settings.js';
 import authRoutes from './src/routes/auth.js';
 import shiftRoutes from './src/routes/shifts.js';
+import dashboardRoutes from './src/routes/dashboard.js';
+import logRoutes from './src/routes/logs.js';
+import categoryRoutes from './src/routes/categories.js';
+import userRoutes from './src/routes/users.js';
 import AuditLog from './src/models/AuditLog.js';
 
 const app = express();
@@ -190,13 +194,25 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/logs', logRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/users', userRoutes);
 
 import { authenticate, AuthRequest } from './src/middleware/auth.js';
 
-// --- Development & Admin APIs (ADMIN ONLY) ---
-app.get('/api/dev/logs', authenticate, (req: AuthRequest, res) => {
+// --- System & Maintenance APIs ---
+app.get('/api/system/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    version: '1.0.0'
+  });
+});
+
+app.get('/api/admin/system-logs', authenticate, (req: AuthRequest, res) => {
   if (req.user?.role !== 'ADMIN') return res.status(403).json({ error: 'Admin only' });
-  console.log('[Dev] Fetching logs...');
   res.json(systemLogs.slice().reverse());
 });
 
@@ -232,207 +248,6 @@ app.get('/api/dev/db-status', authenticate, async (req: AuthRequest, res) => {
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
-  }
-});
-
-app.get('/api/admin/users', authenticate, async (req: AuthRequest, res) => {
-  const tenantId = (req as any).tenantId;
-  const user = req.user;
-  
-  console.log(`[Admin] Fetching users for tenant ${tenantId}, user role: ${user.role}...`);
-  try {
-    let query: any = { tenantId };
-    
-    if (user.role === 'MANAGER' || user.permissions?.includes('USER_MANAGE')) {
-      // Managers (SaaS Customers) see all staff in their tenant
-      query.role = 'STAFF';
-    } else if (user.role === 'ADMIN') {
-      // System Admins see everyone in the tenant
-    } else {
-      return res.status(403).json({ error: 'Permission denied' });
-    }
-
-    const users = await User.find(query, '-password').sort({ createdAt: -1 });
-    res.json(users);
-  } catch (err) {
-    console.error('[Admin] User fetch failed:', err);
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
-});
-
-app.post('/api/admin/users', authenticate, async (req: AuthRequest, res) => {
-  const tenantId = (req as any).tenantId;
-  const currentUser = req.user;
-
-  try {
-    const { role } = req.body;
-
-    if (currentUser.role === 'MANAGER' || (currentUser.role === 'STAFF' && currentUser.permissions?.includes('USER_MANAGE'))) {
-      if (role !== 'STAFF') {
-        return res.status(403).json({ error: 'Bạn chỉ có thể tạo người dùng với vai trò STAFF' });
-      }
-      req.body.role = 'STAFF';
-      req.body.managerId = currentUser._id.toString();
-    } else if (currentUser.role !== 'ADMIN') {
-      return res.status(403).json({ error: 'Permission denied' });
-    }
-
-    const hashedPassword = await bcrypt.hash(req.body.password || 'password@123', 10);
-    const newUser = new User({ ...req.body, tenantId, password: hashedPassword });
-    await newUser.save();
-    res.json(newUser);
-  } catch (err: any) {
-    console.error('Failed to create user:', err);
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyPattern)[0];
-      return res.status(400).json({ error: `Trùng lặp: ${field === 'email' ? 'Email' : 'Số điện thoại'} đã tồn tại` });
-    }
-    res.status(500).json({ error: 'Failed to create user' });
-  }
-});
-
-app.put('/api/admin/users/:id', authenticate, async (req: AuthRequest, res) => {
-  const tenantId = (req as any).tenantId;
-  const currentUser = req.user;
-
-  try {
-    const targetUser = await User.findOne({ _id: req.params.id, tenantId });
-    if (!targetUser) return res.status(404).json({ error: 'User not found' });
-
-    if (currentUser.role !== 'ADMIN') {
-      // Cannot touch ADMIN accounts
-      if (targetUser.role === 'ADMIN') {
-        return res.status(403).json({ error: 'Bạn không có quyền sửa tài khoản ADMIN' });
-      }
-
-      const isManager = currentUser.role === 'MANAGER';
-      const hasStaffManagePermission = currentUser.permissions?.includes('USER_MANAGE');
-      const isTargetStaff = targetUser.role === 'STAFF';
-      const isCreator = targetUser.managerId === currentUser._id.toString();
-
-      // Managers can manage any staff in tenant. Staff with permission can only manage staff they created (or all staff? let's stick to all staff if permission granted)
-      if (!(isManager || hasStaffManagePermission) || !isTargetStaff) {
-         // Special case: if manager trying to edit another manager, we might block it unless they are the same person?
-         if (isManager && targetUser.role === 'MANAGER' && targetUser._id.toString() === currentUser._id.toString()) {
-           // Allow self edit
-         } else {
-           return res.status(403).json({ error: 'Bạn không có quyền sửa tài khoản này' });
-         }
-      }
-      
-      // Manager/Staff cannot escalate privileges or change manager
-      delete req.body.role;
-      delete req.body.managerId;
-    }
-
-    const updateData = { ...req.body };
-    if (updateData.password) {
-      updateData.password = await bcrypt.hash(updateData.password, 10);
-    } else {
-      delete updateData.password;
-    }
-    
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: req.params.id, tenantId }, 
-      updateData, 
-      { returnDocument: 'after' }
-    );
-    res.json(updatedUser);
-  } catch (err: any) {
-    console.error('Failed to update user:', err);
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyPattern)[0];
-      return res.status(400).json({ error: `Trùng lặp: ${field === 'email' ? 'Email' : 'Số điện thoại'} đã tồn tại` });
-    }
-    res.status(500).json({ error: 'Failed to update user' });
-  }
-});
-
-app.delete('/api/admin/users/:id', authenticate, async (req: AuthRequest, res) => {
-  const tenantId = (req as any).tenantId;
-  const currentUser = req.user;
-
-  try {
-    const targetUser = await User.findOne({ _id: req.params.id, tenantId });
-    if (!targetUser) return res.status(404).json({ error: 'User not found' });
-
-    if (currentUser.role !== 'ADMIN') {
-      // Cannot delete ADMIN accounts
-      if (targetUser.role === 'ADMIN') {
-        return res.status(403).json({ error: 'Bạn không có quyền xóa tài khoản ADMIN' });
-      }
-
-      const isManager = currentUser.role === 'MANAGER';
-      const hasStaffManagePermission = currentUser.permissions?.includes('USER_MANAGE');
-      const isTargetStaff = targetUser.role === 'STAFF';
-
-      if (!(isManager || hasStaffManagePermission) || !isTargetStaff) {
-         return res.status(403).json({ error: 'Bạn không có quyền xóa tài khoản này (Chỉ có thể xóa STAFF)' });
-      }
-    }
-
-    // Cascade delete if ADMIN deletes a MANAGER
-    if (currentUser.role === 'ADMIN' && targetUser.role === 'MANAGER') {
-      const purgeTenantId = targetUser.tenantId;
-      console.log(`[Admin] Purging tenant data for: ${purgeTenantId}`);
-      
-      // Audit log the start of purge
-      await AuditLog.create({
-        userId: currentUser._id,
-        action: 'TENANT_PURGE_START',
-        entity: 'Tenant',
-        tenantId: purgeTenantId,
-        details: { managerId: targetUser._id, managerEmail: targetUser.email }
-      });
-
-      try {
-        // Delete everything for this tenant
-        const results = await Promise.all([
-          mongoose.connection.collection('products').deleteMany({ tenantId: purgeTenantId }),
-          mongoose.connection.collection('orders').deleteMany({ tenantId: purgeTenantId }),
-          mongoose.connection.collection('tables').deleteMany({ tenantId: purgeTenantId }),
-          mongoose.connection.collection('shifts').deleteMany({ tenantId: purgeTenantId }),
-          mongoose.connection.collection('settings').deleteMany({ tenantId: purgeTenantId }),
-          mongoose.connection.collection('users').deleteMany({ tenantId: purgeTenantId, role: { $ne: 'ADMIN' } }) 
-        ]);
-        
-        console.log(`[Admin] Tenant ${purgeTenantId} purged successful.`);
-        
-        await AuditLog.create({
-          userId: currentUser._id,
-          action: 'TENANT_PURGE_COMPLETE',
-          entity: 'Tenant',
-          tenantId: purgeTenantId,
-          details: { 
-            deletedCounts: results.map(r => r.deletedCount)
-          }
-        });
-      } catch (purgeErr: any) {
-        console.error('[Admin] Purge error:', purgeErr);
-        await AuditLog.create({
-          userId: currentUser._id,
-          action: 'TENANT_PURGE_FAILED',
-          entity: 'Tenant',
-          tenantId: purgeTenantId,
-          details: { error: purgeErr.message }
-        });
-      }
-    } else {
-      await User.findOneAndDelete({ _id: req.params.id, tenantId });
-      
-      await AuditLog.create({
-        userId: currentUser._id,
-        action: 'USER_DELETE',
-        entity: 'User',
-        entityId: req.params.id,
-        tenantId,
-        details: { deletedEmail: targetUser.email }
-      });
-    }
-
-    res.json({ success: true, message: 'User and tenant data deleted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete user' });
   }
 });
 // --------------------------------
@@ -476,12 +291,21 @@ app.post('/api/dev/seed', authenticate, async (req: AuthRequest, res) => {
 
 // Final catch-all for errors
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('[Global Error Handler]', err);
+  console.error(`[${new Date().toISOString()}] GLOBAL ERROR:`, err);
+  
+  const status = err.status || err.statusCode || 500;
   const isProd = process.env.NODE_ENV === 'production';
-  res.status(500).json({ 
-    error: 'Internal Server Error', 
-    message: isProd ? 'Đã có lỗi xảy ra trên hệ thống.' : err.message,
-    details: isProd ? undefined : err.stack 
+  
+  // Standardized Error Response
+  res.status(status).json({ 
+    success: false,
+    error: {
+      code: status,
+      message: isProd ? (err.message || 'Hệ thống đang gặp sự cố, vui lòng thử lại sau.') : err.message,
+      details: isProd ? undefined : err.stack,
+      path: req.originalUrl,
+      method: req.method
+    }
   });
 });
 
