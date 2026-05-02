@@ -24,6 +24,7 @@ function TooltipTrigger({ asChild, render, children, ...props }: TooltipPrimitiv
     <TooltipPrimitive.Trigger
       data-slot="tooltip-trigger"
       render={asChild ? (children as any) : render}
+      nativeButton={true}
       {...props}
     >
       {asChild ? undefined : children}

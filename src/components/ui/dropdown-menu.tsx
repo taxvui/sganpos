@@ -19,6 +19,7 @@ function DropdownMenuTrigger({ asChild, render, children, ...props }: MenuPrimit
     <MenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
       render={asChild ? (children as any) : render}
+      nativeButton={true}
       {...props}
     >
       {asChild ? undefined : children}

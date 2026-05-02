@@ -8,7 +8,6 @@ import { useAuthStore } from '@/store/authStore';
 import { getTenantPrefix, getTenantFromHostname, getTenantIdFromPath } from '@/lib/tenantUtils';
 import { useSocket } from '@/hooks/useSocket';
 import Logo from '@/components/Logo';
-import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -114,7 +113,7 @@ const AppLayout = () => {
                 )}
               </div>
               <div className="mt-24 pt-10 border-t border-border/50 flex flex-wrap justify-center gap-12 opacity-50 items-center">
-                <span className="font-black tracking-tighter text-2xl text-slate-800 dark:text-slate-200">MONDAY.COM.VN</span>
+                <span className="font-black tracking-tighter text-2xl text-slate-800">MONDAY.COM.VN</span>
                 <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full" />
                 <span className="font-bold text-sm uppercase tracking-widest text-muted-foreground">Professional POS Solutions</span>
               </div>
@@ -269,7 +268,6 @@ const AppLayout = () => {
               <Bell className="w-5 h-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full border-2 border-background" />
             </Button>
-            <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 p-0 overflow-hidden border border-border">

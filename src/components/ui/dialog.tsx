@@ -16,6 +16,7 @@ function DialogTrigger({ asChild, render, children, ...props }: DialogPrimitive.
     <DialogPrimitive.Trigger
       data-slot="dialog-trigger"
       render={asChild ? (children as any) : render}
+      nativeButton={true}
       {...props}
     >
       {asChild ? undefined : children}
@@ -23,20 +24,21 @@ function DialogTrigger({ asChild, render, children, ...props }: DialogPrimitive.
   )
 }
 
-function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
-}
-
 function DialogClose({ asChild, render, children, ...props }: DialogPrimitive.Close.Props & { asChild?: boolean }) {
   return (
     <DialogPrimitive.Close
       data-slot="dialog-close"
       render={asChild ? (children as any) : render}
+      nativeButton={true}
       {...props}
     >
       {asChild ? undefined : children}
     </DialogPrimitive.Close>
   )
+}
+
+function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
 function DialogOverlay({
@@ -78,6 +80,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
+            nativeButton={true}
             render={
               <Button
                 variant="ghost"
@@ -125,7 +128,7 @@ function DialogFooter({
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>
+        <DialogPrimitive.Close render={<Button variant="outline" />} nativeButton={true}>
           Close
         </DialogPrimitive.Close>
       )}

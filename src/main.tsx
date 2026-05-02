@@ -36,13 +36,11 @@ if (typeof window !== 'undefined') {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryProvider>
-      <ThemeProvider defaultTheme="light" storageKey="app-theme">
-        <TooltipProvider>
-          <App />
-          <Toaster position="top-right" expand={false} richColors />
-          <SpeedInsights />
-        </TooltipProvider>
-      </ThemeProvider>
+      <TooltipProvider>
+        <App />
+        <Toaster position="top-right" expand={false} richColors />
+        <SpeedInsights />
+      </TooltipProvider>
     </QueryProvider>
   </StrictMode>,
 );

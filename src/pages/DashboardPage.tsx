@@ -128,20 +128,20 @@ const DashboardPage = () => {
           {/* Header Section */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <Badge variant="outline" className="mb-2 uppercase tracking-widest font-black opacity-60 dark:text-slate-400 dark:border-slate-800">Thống kê vận hành</Badge>
-              <h1 className="text-3xl font-black tracking-tighter uppercase italic leading-none dark:text-white">Bảng điều khiển</h1>
-              <div className="flex items-center gap-2 text-muted-foreground mt-3 font-bold text-xs dark:text-slate-400">
-                <CalendarIcon size={14} className="text-primary dark:text-emerald-400" />
+              <Badge variant="outline" className="mb-2 uppercase tracking-widest font-black opacity-60">Thống kê vận hành</Badge>
+              <h1 className="text-3xl font-black tracking-tighter uppercase italic leading-none">Bảng điều khiển</h1>
+              <div className="flex items-center gap-2 text-muted-foreground mt-3 font-bold text-xs">
+                <CalendarIcon size={14} className="text-primary" />
                 {format(dateRange.start, 'dd/MM/yyyy')} — {format(dateRange.end, 'dd/MM/yyyy')}
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-[180px] h-12 rounded-xl font-bold border-border/50 bg-card/50 backdrop-blur-sm dark:bg-slate-900/50 dark:border-slate-800">
+                <SelectTrigger className="w-[180px] h-12 rounded-xl font-bold border-border/50 bg-card/50 backdrop-blur-sm">
                   <SelectValue placeholder="Chọn thời gian" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl dark:bg-slate-900 dark:border-slate-800">
+                <SelectContent className="rounded-xl">
                   <SelectItem value="today">Hôm nay</SelectItem>
                   <SelectItem value="yesterday">Hôm qua</SelectItem>
                   <SelectItem value="last7days">7 ngày qua</SelectItem>
@@ -149,7 +149,7 @@ const DashboardPage = () => {
                   <SelectItem value="lastMonth">Tháng trước</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 bg-card/50 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-400 hover:dark:bg-slate-800">
+              <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border/50 bg-card/50">
                 <Download size={18} />
               </Button>
             </div>
@@ -164,18 +164,18 @@ const DashboardPage = () => {
               { label: 'Tb. Mỗi Đơn', value: data?.summary?.count > 0 ? (data.summary.total / data.summary.count) : 0, icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-500/10', trend: '-2.1%', isCurrency: true },
             ].map((stat, i) => (
               <motion.div key={i} variants={item}>
-                <Card className="border-border/40 shadow-sm hover:shadow-md transition-all duration-300 group bg-card/40 backdrop-blur-sm overflow-hidden rounded-[24px] dark:bg-slate-900/40 dark:border-slate-800">
+                <Card className="border-border/40 shadow-sm hover:shadow-md transition-all duration-300 group bg-card/40 backdrop-blur-sm overflow-hidden rounded-[24px]">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground dark:text-slate-500">{stat.label}</CardTitle>
+                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">{stat.label}</CardTitle>
                     <div className={cn("p-2 rounded-xl group-hover:scale-110 transition-transform", stat.bg, stat.color)}>
                       <stat.icon className="h-4 w-4" />
                     </div>
                   </CardHeader>
                   <CardContent>
                     {isLoading ? (
-                      <Skeleton className="h-8 w-24 mb-1 dark:bg-slate-800" />
+                      <Skeleton className="h-8 w-24 mb-1" />
                     ) : (
-                      <div className="text-xl font-black tracking-tight mb-1 dark:text-white">
+                      <div className="text-xl font-black tracking-tight mb-1">
                         {stat.isCurrency ? formatCurrency(stat.value) : stat.value.toLocaleString('vi-VN')}
                       </div>
                     )}
@@ -184,7 +184,7 @@ const DashboardPage = () => {
                         {stat.trend.startsWith('+') ? <ArrowUpRight className="inline h-3 w-3" /> : stat.trend.startsWith('-') ? <ArrowDownRight className="inline h-3 w-3" /> : null}
                         {stat.trend}
                       </span>
-                      <span className="text-xs font-bold text-muted-foreground italic truncate dark:text-slate-500">so với kỳ trước</span>
+                      <span className="text-xs font-bold text-muted-foreground italic truncate">so với kỳ trước</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -195,22 +195,22 @@ const DashboardPage = () => {
           {/* Main Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <motion.div variants={item} className="lg:col-span-2">
-              <Card className="h-full border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden dark:bg-slate-900/40 dark:border-slate-800">
+              <Card className="h-full border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden">
                 <CardHeader className="pb-8">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl font-black tracking-tight italic uppercase dark:text-white">Xu hướng doanh thu</CardTitle>
-                      <CardDescription className="font-bold text-xs uppercase tracking-widest opacity-60 dark:text-slate-500">Hiệu suất kinh doanh theo thời gian</CardDescription>
+                      <CardTitle className="text-xl font-black tracking-tight italic uppercase">Xu hướng doanh thu</CardTitle>
+                      <CardDescription className="font-bold text-xs uppercase tracking-widest opacity-60">Hiệu suất kinh doanh theo thời gian</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-none font-black text-xs dark:bg-emerald-500/20 dark:text-emerald-400">REAL-TIME</Badge>
+                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-none font-black text-xs">REAL-TIME</Badge>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[350px] w-full">
                     {isLoading ? (
-                      <Skeleton className="h-full w-full rounded-2xl dark:bg-slate-800" />
+                      <Skeleton className="h-full w-full rounded-2xl" />
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data?.daily || []} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
@@ -267,22 +267,22 @@ const DashboardPage = () => {
             </motion.div>
 
             <motion.div variants={item}>
-              <Card className="h-full border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden dark:bg-slate-900/40 dark:border-slate-800">
+              <Card className="h-full border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden">
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-muted dark:bg-slate-800 rounded-xl">
-                       <PieChartIcon size={20} className="text-primary dark:text-emerald-400" />
+                    <div className="p-2 bg-muted rounded-xl">
+                       <PieChartIcon size={20} className="text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-black tracking-tight italic uppercase dark:text-white">Thanh toán</CardTitle>
-                      <CardDescription className="text-xs font-black uppercase tracking-widest opacity-60 dark:text-slate-500">Cơ cấu nguồn thu</CardDescription>
+                      <CardTitle className="text-lg font-black tracking-tight italic uppercase">Thanh toán</CardTitle>
+                      <CardDescription className="text-xs font-black uppercase tracking-widest opacity-60">Cơ cấu nguồn thu</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[240px] w-full mb-6">
                     {isLoading ? (
-                      <Skeleton className="h-full w-3/4 mx-auto rounded-full dark:bg-slate-800" />
+                      <Skeleton className="h-full w-3/4 mx-auto rounded-full" />
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -321,21 +321,21 @@ const DashboardPage = () => {
 
                   <div className="space-y-4">
                     {(data?.paymentMethods || []).map((method: any, index: number) => (
-                      <div key={method._id} className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 dark:bg-slate-800/30 border border-border/10 dark:border-slate-800">
+                       <div key={method._id} className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-border/10">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                          <span className="text-xs font-black uppercase tracking-tight text-foreground/80 dark:text-slate-400">{method._id === 'TRANSFER' ? 'Chuyển khoản' : 'Tiền mặt'}</span>
+                          <span className="text-xs font-black uppercase tracking-tight text-foreground/80">{method._id === 'TRANSFER' ? 'Chuyển khoản' : 'Tiền mặt'}</span>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-black tracking-tight dark:text-white">{formatCurrency(method.revenue)}</p>
-                          <p className="text-xs font-bold text-muted-foreground uppercase dark:text-slate-500">{((method.revenue / Math.max(data.summary.total, 1)) * 100).toFixed(1)}%</p>
+                          <p className="text-sm font-black tracking-tight">{formatCurrency(method.revenue)}</p>
+                          <p className="text-xs font-bold text-muted-foreground uppercase">{((method.revenue / Math.max(data.summary.total, 1)) * 100).toFixed(1)}%</p>
                         </div>
                       </div>
                     ))}
                     {!isLoading && (!data?.paymentMethods || data.paymentMethods.length === 0) && (
                       <div className="text-center py-12">
-                        <PieChartIcon className="mx-auto w-12 h-12 text-muted/30 mb-2 dark:text-slate-800" />
-                        <p className="text-muted-foreground text-xs italic font-bold dark:text-slate-600">Chưa có dữ liệu thanh toán</p>
+                        <PieChartIcon className="mx-auto w-12 h-12 text-muted/30 mb-2" />
+                        <p className="text-muted-foreground text-xs italic font-bold">Chưa có dữ liệu thanh toán</p>
                       </div>
                     )}
                   </div>
@@ -348,28 +348,28 @@ const DashboardPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Products */}
             <motion.div variants={item}>
-              <Card className="border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden h-full dark:bg-slate-900/40 dark:border-slate-800">
+              <Card className="border-border/40 bg-card/40 backdrop-blur-sm shadow-sm rounded-[32px] overflow-hidden h-full">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-500/10 rounded-xl text-amber-500 border border-amber-500/10 dark:bg-amber-500/20 dark:border-amber-500/20">
+                    <div className="p-2 bg-amber-500/10 rounded-xl text-amber-500 border border-amber-500/10">
                        <BarChartIcon size={20} />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-black tracking-tight italic uppercase dark:text-white">Top sản phẩm</CardTitle>
-                      <CardDescription className="text-xs font-black uppercase tracking-widest opacity-60 dark:text-slate-500">Sản phẩm mang lại doanh thu cao nhất</CardDescription>
+                      <CardTitle className="text-lg font-black tracking-tight italic uppercase">Top sản phẩm</CardTitle>
+                      <CardDescription className="text-xs font-black uppercase tracking-widest opacity-60">Sản phẩm mang lại doanh thu cao nhất</CardDescription>
                     </div>
                   </div>
-                  <Badge variant="outline" className="rounded-lg font-black dark:text-slate-400 dark:border-slate-800">TOP 5</Badge>
+                  <Badge variant="outline" className="rounded-lg font-black">TOP 5</Badge>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6 pt-4">
                     {isLoading ? (
                       Array(5).fill(0).map((_, i) => (
                         <div key={i} className="flex items-center gap-4">
-                          <Skeleton className="h-8 w-8 rounded-lg dark:bg-slate-800" />
+                          <Skeleton className="h-8 w-8 rounded-lg" />
                           <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4 dark:bg-slate-800" />
-                            <Skeleton className="h-2 w-full dark:bg-slate-800" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-2 w-full" />
                           </div>
                         </div>
                       ))
@@ -378,36 +378,36 @@ const DashboardPage = () => {
                         <div key={product._id} className="flex items-center gap-4 group">
                           <div className={cn(
                             "flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black border group-hover:scale-110 transition-transform",
-                            index === 0 ? "bg-amber-500/20 border-amber-500/20 text-amber-600 dark:text-amber-400" : "bg-muted dark:bg-slate-800 border-border/50 dark:border-slate-700 text-muted-foreground dark:text-slate-400"
+                            index === 0 ? "bg-amber-500/20 border-amber-500/20 text-amber-600" : "bg-muted border-border/50 text-muted-foreground"
                           )}>
                             {index + 1}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm font-black text-foreground dark:text-white truncate">{product._id}</span>
+                              <span className="text-sm font-black text-foreground truncate">{product._id}</span>
                               <div className="text-right">
-                                <span className="text-xs font-bold text-muted-foreground dark:text-slate-500">{product.quantity} lần gọi</span>
+                                <span className="text-xs font-bold text-muted-foreground">{product.quantity} lần gọi</span>
                               </div>
                             </div>
-                            <div className="w-full bg-muted/50 dark:bg-slate-800/50 h-2 rounded-full overflow-hidden border border-border/20 dark:border-slate-700">
+                            <div className="w-full bg-muted/50 h-2 rounded-full overflow-hidden border border-border/20">
                               <motion.div 
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(product.revenue / Math.max(data?.topProducts[0]?.revenue, 1)) * 100}%` }}
                                 transition={{ duration: 1, ease: "circOut" }}
-                                className={cn("h-full rounded-full shadow-sm", index === 0 ? "bg-amber-500 border-none" : "bg-primary dark:bg-emerald-500")}
+                                className={cn("h-full rounded-full shadow-sm", index === 0 ? "bg-amber-500 border-none" : "bg-primary")}
                               />
                             </div>
                           </div>
-                          <div className="text-right flex-shrink-0 bg-muted/30 dark:bg-slate-800/50 px-3 py-1.5 rounded-xl border border-border/20 dark:border-slate-700">
-                            <p className="text-xs font-black dark:text-white">{formatCurrency(product.revenue)}</p>
+                          <div className="text-right flex-shrink-0 bg-muted/30 px-3 py-1.5 rounded-xl border border-border/20">
+                            <p className="text-xs font-black">{formatCurrency(product.revenue)}</p>
                           </div>
                         </div>
                       ))
                     )}
                     {!isLoading && (!data?.topProducts || data.topProducts.length === 0) && (
                       <div className="text-center py-16 opacity-30 grayscale scale-90">
-                        <Coffee size={64} className="mx-auto mb-4 dark:text-slate-600" />
-                        <p className="text-sm italic font-black dark:text-slate-600">Chưa có dữ liệu sản phẩm</p>
+                        <Coffee size={64} className="mx-auto mb-4" />
+                        <p className="text-sm italic font-black">Chưa có dữ liệu sản phẩm</p>
                       </div>
                     )}
                   </div>

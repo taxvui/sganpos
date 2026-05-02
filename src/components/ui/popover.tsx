@@ -14,6 +14,7 @@ function PopoverTrigger({ asChild, render, children, ...props }: PopoverPrimitiv
     <PopoverPrimitive.Trigger
       data-slot="popover-trigger"
       render={asChild ? (children as any) : render}
+      nativeButton={true}
       {...props}
     >
       {asChild ? undefined : children}

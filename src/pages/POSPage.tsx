@@ -74,9 +74,9 @@ const ProductCard: React.FC<{ product: Product, onAdd: () => void }> = ({ produc
     whileHover={{ y: -4, transition: { duration: 0.2 } }}
     whileTap={{ scale: 0.96 }}
     onClick={onAdd}
-    className="group relative flex flex-col h-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-emerald-500/10 hover:border-emerald-500/50 transition-all text-left overflow-hidden"
+    className="group relative flex flex-col h-full bg-card rounded-2xl border border-border shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/50 transition-all text-left overflow-hidden"
   >
-    <div className="aspect-square bg-slate-50 dark:bg-slate-950 overflow-hidden relative">
+    <div className="aspect-square bg-muted overflow-hidden relative">
       {product.image ? (
         <img 
           src={product.image} 
@@ -85,7 +85,7 @@ const ProductCard: React.FC<{ product: Product, onAdd: () => void }> = ({ produc
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-          <Coffee className="text-slate-200 dark:text-slate-800 group-hover:text-emerald-500 transition-colors" size={40} />
+          <Coffee className="text-muted-foreground/30 group-hover:text-primary transition-colors" size={40} />
         </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
@@ -96,11 +96,11 @@ const ProductCard: React.FC<{ product: Product, onAdd: () => void }> = ({ produc
     </div>
     
     <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between gap-1">
-      <h3 className="font-bold text-slate-900 dark:text-slate-100 leading-tight line-clamp-2 text-xs sm:text-sm uppercase tracking-tight font-sans">
+      <h3 className="font-bold text-foreground leading-tight line-clamp-2 text-xs sm:text-sm uppercase tracking-tight font-sans">
         {product.name}
       </h3>
-      <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-100 dark:border-slate-800">
-        <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base font-mono">
+      <div className="flex items-center justify-between mt-auto pt-2 border-t border-border">
+        <span className="text-primary font-extrabold text-sm sm:text-base font-mono">
           {product.basePrice.toLocaleString('vi-VN')}
           <span className="text-xs ml-0.5">đ</span>
         </span>
@@ -833,22 +833,15 @@ const POSPage = () => {
     setSelectedCartItem(null);
   };
 
-  const PRESET_NOTES = [
-    'Ít đá', 'Nhiều đá', 'Không đá', 
-    'Ít đường', 'Nhiều đường', 'Không đường', 
-    'Ít sữa', 'Nhiều sữa', 'Không sữa',
-    'Mang về', 'Uống tại chỗ'
-  ];
-
   const CartContent = ({ onBack }: { onBack?: () => void }) => (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 overflow-hidden">
-      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/50">
+    <div className="flex flex-col h-full bg-white overflow-hidden">
+      <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-900 dark:bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shrink-0">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-lg shrink-0">
             <ShoppingCart size={20} />
           </div>
           <div>
-            <h2 className="text-lg font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Giỏ hàng</h2>
+            <h2 className="text-lg font-black text-slate-900 tracking-tighter uppercase leading-none">Giỏ hàng</h2>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="outline" className="text-xs h-4 px-1.5 font-black uppercase tracking-widest italic border-emerald-500/30 text-emerald-600 bg-emerald-500/5">
                 {selectedTable?.name}
@@ -862,7 +855,7 @@ const POSPage = () => {
             variant="ghost" 
             size="icon" 
             onClick={() => setShowCustomItemModal(true)}
-            className="w-9 h-9 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-xl"
+            className="w-9 h-9 text-emerald-600 hover:bg-emerald-50 rounded-xl"
           >
             <Plus size={18} />
           </Button>
@@ -870,7 +863,7 @@ const POSPage = () => {
             variant="ghost" 
             size="icon" 
             onClick={resetFlow}
-            className="w-9 h-9 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl"
+            className="w-9 h-9 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl"
           >
             <Trash2 size={18} />
           </Button>
@@ -885,11 +878,11 @@ const POSPage = () => {
       <ScrollArea className="flex-1 px-4 sm:px-6 py-4">
         <AnimatePresence initial={false}>
           {cart.length === 0 ? (
-            <div key="empty-cart" className="h-[40vh] flex flex-col items-center justify-center text-slate-200 dark:text-slate-800 opacity-50">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-950 rounded-[32px] flex items-center justify-center mb-4">
-                <Coffee size={32} className="text-slate-300 dark:text-slate-700" />
+            <div key="empty-cart" className="h-[40vh] flex flex-col items-center justify-center text-slate-200 opacity-50">
+              <div className="w-20 h-20 bg-slate-50 rounded-[32px] flex items-center justify-center mb-4">
+                <Coffee size={32} className="text-slate-300" />
               </div>
-              <p className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-600">Bắt đầu chọn món ngay</p>
+              <p className="text-xs font-black uppercase tracking-widest text-slate-400">Bắt đầu chọn món ngay</p>
             </div>
           ) : (
             <div key="cart-list" className="flex flex-col gap-3 pb-4">
@@ -903,8 +896,8 @@ const POSPage = () => {
                   className={cn(
                     "p-4 rounded-2xl border transition-all flex flex-col gap-3 group relative overflow-hidden",
                     item.isSent 
-                      ? "bg-slate-50 dark:bg-slate-950 border-slate-100 dark:border-slate-800/50 opacity-90" 
-                      : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md dark:hover:shadow-emerald-500/5"
+                      ? "bg-slate-50 border-slate-100 opacity-90" 
+                      : "bg-white border-slate-200 shadow-sm hover:shadow-md"
                   )}
                 >
                   {item.isSent && (
@@ -914,9 +907,9 @@ const POSPage = () => {
                   )}
                   <div className="flex justify-between items-start gap-2">
                      <div className="flex-1">
-                       <h4 className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight leading-tight mb-1">{item.name}</h4>
+                       <h4 className="text-xs font-black text-slate-800 uppercase tracking-tight leading-tight mb-1">{item.name}</h4>
                        <div className="flex flex-wrap items-center gap-2">
-                         <span className="text-xs font-bold text-slate-400 dark:text-slate-500 font-mono">
+                         <span className="text-xs font-bold text-slate-400 font-mono">
                            {item.price.toLocaleString('vi-VN')}đ / món
                          </span>
                          {item.note && (
@@ -927,45 +920,45 @@ const POSPage = () => {
                        </div>
                        <button 
                         onClick={() => handleOpenNoteModal(item)}
-                        className="mt-2 flex items-center gap-1.5 py-1 px-2 group/note bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-all"
+                        className="mt-2 flex items-center gap-1.5 py-1 px-2 group/note bg-slate-50 hover:bg-emerald-50 rounded-lg transition-all"
                        >
                          <StickyNote size={10} className="text-slate-400 group-hover/note:text-emerald-500" />
-                         <span className="text-xs font-black text-slate-500 dark:text-slate-400 group-hover/note:text-emerald-600 uppercase tracking-widest">
+                         <span className="text-xs font-black text-slate-500 group-hover/note:text-emerald-600 uppercase tracking-widest">
                            {item.note ? 'Sửa chú thích' : 'Thêm chú thích'}
                          </span>
                        </button>
-                     </div>
-                     <Button 
-                       variant="ghost" 
-                       size="icon" 
-                       onClick={() => removeFromCart(item.id)} 
-                       className="h-8 w-8 text-slate-300 hover:text-red-500 dark:hover:bg-red-500/10 rounded-xl shrink-0"
-                     >
-                       <X size={14} />
-                     </Button>
-                  </div>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => removeFromCart(item.id)} 
+                        className="h-8 w-8 text-slate-300 hover:text-red-500 rounded-xl shrink-0"
+                      >
+                        <X size={14} />
+                      </Button>
+                   </div>
                   
-                  <div className="flex justify-between items-center pt-2 border-t border-slate-100/50 dark:border-slate-800/50">
-                    <span className="text-slate-900 dark:text-white font-black text-sm font-mono">
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-100/50">
+                    <span className="text-slate-900 font-black text-sm font-mono">
                       {(item.price * item.quantity).toLocaleString('vi-VN')}đ
                     </span>
-                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                    <div className="flex items-center bg-slate-100 p-1 rounded-xl">
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={() => updateQuantity(item.id, -1)} 
-                        className="h-7 w-7 bg-white dark:bg-slate-900 shadow-sm hover:text-red-500 rounded-lg"
+                        className="h-7 w-7 bg-white shadow-sm hover:text-red-500 rounded-lg"
                       >
                         <Minus size={12} />
                       </Button>
-                      <span className="font-mono text-xs font-black min-w-[32px] text-center text-slate-900 dark:text-white">
+                      <span className="font-mono text-xs font-black min-w-[32px] text-center text-slate-900">
                         {item.quantity}
                       </span>
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         onClick={() => updateQuantity(item.id, 1)} 
-                        className="h-7 w-7 bg-white dark:bg-slate-900 shadow-sm hover:text-emerald-500 rounded-lg"
+                        className="h-7 w-7 bg-white shadow-sm hover:text-emerald-500 rounded-lg"
                       >
                         <Plus size={12} />
                       </Button>
@@ -978,19 +971,19 @@ const POSPage = () => {
         </AnimatePresence>
       </ScrollArea>
 
-      <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] dark:shadow-none space-y-4">
+      <div className="p-6 bg-white border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] space-y-4">
         <div className="space-y-2">
-          <div className="flex justify-between items-center text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+          <div className="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest">
             <span>Tạm tính</span>
-            <span className="text-slate-700 dark:text-slate-300 font-mono italic">{subtotal.toLocaleString('vi-VN')}đ</span>
+            <span className="text-slate-700 font-mono italic">{subtotal.toLocaleString('vi-VN')}đ</span>
           </div>
           
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Giảm giá</span>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Giảm giá</span>
               <button 
                 onClick={() => setDiscountType(discountType === 'PERCENTAGE' ? 'FIXED' : 'PERCENTAGE')}
-                className="text-[10px] font-black bg-slate-100 dark:bg-slate-800 h-4 px-1.5 rounded uppercase tracking-tighter text-slate-500 border border-slate-200 dark:border-slate-700"
+                className="text-[10px] font-black bg-slate-100 h-4 px-1.5 rounded uppercase tracking-tighter text-slate-500 border border-slate-200"
               >
                 {discountTypeFormatted}
               </button>
@@ -999,21 +992,21 @@ const POSPage = () => {
               type="number"
               value={discountValue}
               onChange={(e) => setDiscountValue(Number(e.target.value))}
-              className="w-20 h-7 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-right text-xs font-black text-emerald-600 focus-visible:ring-emerald-500 p-1"
+              className="w-20 h-7 bg-slate-50 border-slate-200 text-right text-xs font-black text-emerald-600 focus-visible:ring-emerald-500 p-1"
             />
           </div>
 
           {taxRate > 0 && (
-            <div className="flex justify-between items-center text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            <div className="flex justify-between items-center text-xs font-black text-slate-400 uppercase tracking-widest">
               <span>VAT ({taxRate}%)</span>
-              <span className="text-slate-700 dark:text-slate-300 font-mono italic">{taxAmount.toLocaleString('vi-VN')}đ</span>
+              <span className="text-slate-700 font-mono italic">{taxAmount.toLocaleString('vi-VN')}đ</span>
             </div>
           )}
 
-          <div className="flex justify-between items-end pt-3 mt-1 border-t border-dashed border-slate-200 dark:border-slate-800">
-            <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Thành tiền</span>
+          <div className="flex justify-between items-end pt-3 mt-1 border-t border-dashed border-slate-200">
+            <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Thành tiền</span>
             <div className="text-right">
-              <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter font-mono leading-none">
+              <p className="text-3xl font-black text-emerald-600 tracking-tighter font-mono leading-none">
                 {total.toLocaleString('vi-VN')}
                 <span className="text-sm ml-1 italic tracking-normal">đ</span>
               </p>
@@ -1027,10 +1020,10 @@ const POSPage = () => {
             variant="outline"
             onClick={handleSendToKitchen}
             className={cn(
-              "h-12 rounded-xl text-xs font-black uppercase tracking-widest transition-all gap-2 border-slate-200 dark:border-slate-800",
+              "h-12 rounded-xl text-xs font-black uppercase tracking-widest transition-all gap-2 border-slate-200",
               cart.some(i => !i.isSent)
                 ? "bg-emerald-500 hover:bg-emerald-600 border-emerald-500 text-white"
-                : "bg-slate-50 dark:bg-slate-950 text-slate-400 opacity-60"
+                : "bg-slate-50 text-slate-400 opacity-60"
             )}
           >
             <Utensils size={14} /> Báo bếp
@@ -1039,7 +1032,7 @@ const POSPage = () => {
             disabled={cart.length === 0}
             variant="outline"
             onClick={handlePrintProvisional}
-            className="h-12 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-black uppercase tracking-widest gap-2"
+            className="h-12 border-slate-200 text-slate-600 rounded-xl text-xs font-black uppercase tracking-widest gap-2"
           >
             <Printer size={14} /> Tạm tính
           </Button>
@@ -1076,7 +1069,7 @@ const POSPage = () => {
     return (
       <IonPage>
         <IonContent>
-          <div className="h-full flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+          <div className="h-full flex items-center justify-center bg-slate-50">
             <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin" />
           </div>
         </IonContent>
@@ -1087,8 +1080,8 @@ const POSPage = () => {
   return (
     <IonPage>
       <IonContent>
-        <div className="flex h-full overflow-hidden bg-slate-50 dark:bg-slate-950 justify-center">
-      <div className="flex w-full max-w-[1440px] h-full overflow-hidden bg-white dark:bg-slate-950 lg:bg-transparent shadow-2xl lg:shadow-none">
+        <div className="flex h-full overflow-hidden bg-slate-50 justify-center">
+      <div className="flex w-full max-w-[1440px] h-full overflow-hidden bg-white lg:bg-transparent shadow-2xl lg:shadow-none">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <AnimatePresence mode="wait">
@@ -1103,15 +1096,15 @@ const POSPage = () => {
             >
               <div className="text-center mb-12 sm:mb-16">
                 <div className="flex items-center justify-center gap-3 mb-4">
-                  <Badge variant={isOnline ? "outline" : "destructive"} className="px-3 py-1 gap-2 border-slate-200 dark:border-slate-800">
+                  <Badge variant={isOnline ? "outline" : "destructive"} className="px-3 py-1 gap-2 border-slate-200">
                     {isOnline ? <Wifi size={12} className="text-emerald-500" /> : <WifiOff size={12} />}
                     {isOnline ? "System Online" : "System Offline (Local Mode)"}
                   </Badge>
                 </div>
-                <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase mb-4">
+                <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter uppercase mb-4">
                   Terminal <span className="text-emerald-600">POS</span>
                 </h1>
-                <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Chào mừng quay trở lại, <span className="text-slate-900 dark:text-slate-100 font-bold">{user?.name}</span></p>
+                <p className="text-slate-500 font-medium tracking-tight">Chào mừng quay trở lại, <span className="text-slate-900 font-bold">{user?.name}</span></p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
@@ -1127,7 +1120,7 @@ const POSPage = () => {
                     animate={{ opacity: 1, y: 0, transition: { delay: idx * 0.1 } }}
                     onClick={t.action}
                     className={cn(
-                      "group relative bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl transition-all flex flex-col items-center justify-center gap-6 overflow-hidden",
+                      "group relative bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm hover:shadow-2xl transition-all flex flex-col items-center justify-center gap-6 overflow-hidden",
                       t.color === 'emerald' && "hover:border-emerald-500/50 hover:shadow-emerald-500/10",
                       t.color === 'slate' && "hover:border-slate-900/50 hover:shadow-slate-900/10",
                       t.color === 'blue' && "hover:border-blue-500/50 hover:shadow-blue-500/10",
@@ -1136,22 +1129,22 @@ const POSPage = () => {
                   >
                     <div className={cn(
                       "w-16 h-16 rounded-[24px] flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-3",
-                      t.color === 'emerald' && "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600",
-                      t.color === 'slate' && "bg-slate-50 dark:bg-slate-100/10 text-slate-800 dark:text-slate-100",
-                      t.color === 'blue' && "bg-blue-50 dark:bg-blue-500/10 text-blue-600",
-                      t.color === 'rose' && "bg-rose-50 dark:bg-rose-500/10 text-rose-600"
+                      t.color === 'emerald' && "bg-emerald-50 text-emerald-600",
+                      t.color === 'slate' && "bg-slate-50 text-slate-800",
+                      t.color === 'blue' && "bg-blue-50 text-blue-600",
+                      t.color === 'rose' && "bg-rose-50 text-rose-600"
                     )}>
                       {t.icon}
                     </div>
                     <div className="text-center">
-                      <span className="block text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1">{t.label}</span>
-                      <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t.sub}</span>
+                      <span className="block text-2xl font-black text-slate-900 uppercase tracking-tighter mb-1">{t.label}</span>
+                      <span className="block text-xs font-bold text-slate-400 uppercase tracking-widest">{t.sub}</span>
                     </div>
 
                     <div className={cn(
                       "absolute bottom-0 left-0 h-1 transition-all w-0 group-hover:w-full",
                       t.color === 'emerald' && "bg-emerald-500",
-                      t.color === 'slate' && "bg-slate-900 dark:bg-slate-100",
+                      t.color === 'slate' && "bg-slate-900",
                       t.color === 'blue' && "bg-blue-500",
                       t.color === 'rose' && "bg-rose-500"
                     )} />
@@ -1161,13 +1154,13 @@ const POSPage = () => {
 
               <div className="mt-16 flex items-center gap-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
                 <div className="flex flex-col items-center">
-                   <div className="w-12 h-12 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400">
+                   <div className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
                      <Info size={18} />
                    </div>
                    <span className="text-xs font-bold uppercase tracking-widest mt-2">{tables.length} Máy trạm</span>
                 </div>
                 <div className="flex flex-col items-center">
-                   <div className="w-12 h-12 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400">
+                   <div className="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
                      <Utensils size={18} />
                    </div>
                    <span className="text-xs font-bold uppercase tracking-widest mt-2">{products.length} Món ăn</span>
@@ -1191,12 +1184,12 @@ const POSPage = () => {
                     variant="outline" 
                     size="icon" 
                     onClick={() => setStep('TYPE')}
-                    className="rounded-xl border-slate-200 dark:border-slate-800"
+                    className="rounded-xl border-slate-200"
                   >
                     <ChevronLeft className="text-slate-500" />
                   </Button>
                   <div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase italic">
                       {orderType === 'DINE_IN' ? 'Chọn Bàn' : orderType === 'TAKEAWAY' ? 'Chọn Ô mang về' : 'Chọn Slot ship'}
                     </h2>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Lựa chọn vị trí để bắt đầu đơn hàng</p>
@@ -1230,10 +1223,10 @@ const POSPage = () => {
                         className={cn(
                           "relative aspect-square sm:aspect-[4/3] rounded-[32px] border-2 flex flex-col items-center justify-center gap-2 transition-all group overflow-hidden shadow-sm",
                           isOccupied 
-                            ? "bg-emerald-500 dark:bg-emerald-600 border-emerald-400 dark:border-emerald-500 text-white shadow-emerald-500/20"
+                            ? "bg-emerald-500 border-emerald-400 text-white shadow-emerald-500/20"
                             : hasItems
-                              ? "bg-amber-50 dark:bg-amber-500/10 border-amber-400/50 dark:border-amber-500/50 text-amber-900 dark:text-amber-100 shadow-amber-500/10"
-                              : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 text-slate-900 dark:text-slate-100"
+                              ? "bg-amber-50 border-amber-400/50 text-amber-900 shadow-amber-500/10"
+                              : "bg-white border-slate-100 hover:border-emerald-500 text-slate-900"
                         )}
                       >
                         <div className={cn(
@@ -1242,7 +1235,7 @@ const POSPage = () => {
                             ? "bg-white/20 text-white"
                             : hasItems
                               ? "bg-amber-500 text-white"
-                              : "bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white"
+                              : "bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white"
                         )}>
                           {isOccupied ? 'Phục vụ' : hasItems ? 'Có món' : 'Trống'}
                         </div>
@@ -1273,9 +1266,9 @@ const POSPage = () => {
                key="menu-step"
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
-               className="flex flex-col h-full bg-slate-50 dark:bg-slate-950"
+               className="flex flex-col h-full bg-slate-50"
             >
-              <header className="px-4 sm:px-8 py-4 sm:py-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+              <header className="px-4 sm:px-8 py-4 sm:py-6 bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex items-center gap-4 w-full sm:w-auto">
                     <Button 
@@ -1288,16 +1281,16 @@ const POSPage = () => {
                         }
                         setStep('TABLE');
                       }} 
-                      className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+                      className="rounded-xl border-slate-200 bg-white shadow-sm"
                     >
                       <ChevronLeft className="text-slate-500" />
                     </Button>
                     <div className="flex-1 sm:flex-initial">
-                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">{selectedTable?.name}</h1>
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tighter uppercase italic">{selectedTable?.name}</h1>
                       <div className="flex items-center gap-2">
-                        <p className="text-emerald-600 dark:text-emerald-400 text-xs font-black uppercase tracking-widest leading-none">{orderType?.replace('_', ' ')}</p>
-                        <span className="text-slate-200 dark:text-slate-800 text-xs">|</span>
-                        <p className="text-slate-400 dark:text-slate-500 text-xs font-black uppercase tracking-widest leading-none">Shift: {shift?.code}</p>
+                        <p className="text-emerald-600 text-xs font-black uppercase tracking-widest leading-none">{orderType?.replace('_', ' ')}</p>
+                        <span className="text-slate-200 text-xs">|</span>
+                        <p className="text-slate-400 text-xs font-black uppercase tracking-widest leading-none">Shift: {shift?.code}</p>
                       </div>
                     </div>
                     {/* Cart Trigger for Mobile */}
@@ -1307,7 +1300,7 @@ const POSPage = () => {
                     >
                       <ShoppingCart size={20} />
                       {cart.length > 0 && (
-                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900 text-[10px] flex items-center justify-center font-black">
+                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full border-2 border-white text-[10px] flex items-center justify-center font-black">
                           {cart.reduce((acc, curr) => acc + curr.quantity, 0)}
                         </span>
                       )}
@@ -1320,7 +1313,7 @@ const POSPage = () => {
                       placeholder="Tìm món trong thực đơn..." 
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 pl-11 rounded-xl h-11 text-sm focus-visible:ring-emerald-500 shadow-sm" 
+                      className="bg-white border-slate-200 pl-11 rounded-xl h-11 text-sm focus-visible:ring-emerald-500 shadow-sm" 
                     />
                   </div>
                 </div>
@@ -1335,7 +1328,7 @@ const POSPage = () => {
                         "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap border shadow-sm",
                         selectedCategory === cat 
                           ? "bg-emerald-600 text-white border-emerald-600 shadow-emerald-500/10" 
-                          : "bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700"
+                          : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300"
                       )}
                     >
                       {cat}
@@ -1352,9 +1345,9 @@ const POSPage = () => {
                       if (catProducts.length === 0) return null;
                       return (
                         <div key={`cat-group-${cat}`} className="mb-10">
-                          <h3 className="text-xs font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.4em] mb-6 flex items-center gap-4">
+                          <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.4em] mb-6 flex items-center gap-4">
                             {cat}
-                            <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800/50" />
+                            <div className="h-px flex-1 bg-slate-200" />
                           </h3>
                           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
                             {catProducts.map((product, idx) => (
@@ -1385,7 +1378,7 @@ const POSPage = () => {
             initial={{ x: 400 }}
             animate={{ x: 0 }}
             exit={{ x: 400 }}
-            className="hidden lg:flex w-[400px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 flex-col shadow-2xl dark:shadow-none z-20"
+            className="hidden lg:flex w-[400px] bg-white border-l border-slate-200 flex-col shadow-2xl z-20"
           >
             <CartContent />
           </motion.aside>
@@ -1408,9 +1401,9 @@ const POSPage = () => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 h-[85vh] bg-white dark:bg-slate-900 rounded-t-[40px] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] z-[70] lg:hidden flex flex-col overflow-hidden"
+              className="fixed bottom-0 left-0 right-0 h-[85vh] bg-white rounded-t-[40px] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] z-[70] lg:hidden flex flex-col overflow-hidden"
             >
-              <div className="w-12 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mx-auto my-4 shrink-0" />
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto my-4 shrink-0" />
               <div className="flex-1 overflow-hidden">
                 <CartContent onBack={() => setShowMobileCart(false)} />
               </div>
@@ -1423,14 +1416,14 @@ const POSPage = () => {
       <Dialog open={showPaymentModal} onOpenChange={(open) => !ordering && setShowPaymentModal(open)}>
         <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-none rounded-[40px] shadow-2xl">
           {paymentStep === 'SELECT' ? (
-            <div className="p-8 dark:bg-slate-900">
+            <div className="p-8">
               <DialogHeader className="mb-8">
                 <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-xl flex items-center justify-center">
+                   <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
                       <Banknote size={20} />
                    </div>
                    <div>
-                     <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">Thanh toán</DialogTitle>
+                     <DialogTitle className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">Thanh toán</DialogTitle>
                      <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Chọn phương thức để kết thúc</DialogDescription>
                    </div>
                 </div>
@@ -1440,14 +1433,14 @@ const POSPage = () => {
                 <Button 
                   variant="outline"
                   onClick={() => handleConfirmPayment('CASH')}
-                  className="w-full h-24 p-6 border-slate-200 dark:border-slate-800 rounded-[32px] flex items-center justify-between group hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/5 transition-all text-left bg-white dark:bg-slate-900 shadow-sm"
+                  className="w-full h-24 p-6 border-slate-200 rounded-[32px] flex items-center justify-between group hover:border-emerald-500 hover:bg-emerald-50 transition-all text-left bg-white shadow-sm"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors">
+                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors">
                       <Banknote size={24} />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-slate-900 dark:text-white uppercase">Tiền mặt</p>
+                      <p className="text-sm font-black text-slate-900 uppercase">Tiền mặt</p>
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Thanh toán trực tiếp</p>
                     </div>
                   </div>
@@ -1457,14 +1450,14 @@ const POSPage = () => {
                 <Button 
                   variant="outline"
                   onClick={() => handleConfirmPayment('TRANSFER')}
-                  className="w-full h-24 p-6 border-slate-200 dark:border-slate-800 rounded-[32px] flex items-center justify-between group hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/5 transition-all text-left bg-white dark:bg-slate-900 shadow-sm"
+                  className="w-full h-24 p-6 border-slate-200 rounded-[32px] flex items-center justify-between group hover:border-emerald-500 hover:bg-emerald-50 transition-all text-left bg-white shadow-sm"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors">
+                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-emerald-600 transition-colors">
                       <CreditCard size={24} />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-slate-900 dark:text-white uppercase">Chuyển khoản</p>
+                      <p className="text-sm font-black text-slate-900 uppercase">Chuyển khoản</p>
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">VietQR Dynamic code</p>
                     </div>
                   </div>
@@ -1479,44 +1472,44 @@ const POSPage = () => {
                     {total.toLocaleString('vi-VN')}đ
                   </div>
                 </div>
-                        <div className="h-10 w-10 rounded-full bg-slate-900/10 dark:bg-white/20 flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-slate-900/10 flex items-center justify-center">
                    <CircleDollarSign size={24} />
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-8 flex flex-col items-center text-center dark:bg-slate-900">
+            <div className="p-8 flex flex-col items-center text-center">
               <header className="w-full flex justify-between items-center mb-10">
                 <Button variant="ghost" size="icon" onClick={() => setPaymentStep('SELECT')} className="rounded-full">
                   <ChevronLeft size={20} />
                 </Button>
-                <DialogTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">VietQR Payment</DialogTitle>
+                <DialogTitle className="text-xl font-black text-slate-900 tracking-tighter uppercase italic">VietQR Payment</DialogTitle>
                 <div className="w-10" />
               </header>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-[40px] border border-slate-100 dark:border-slate-700 shadow-inner mb-8">
+              <div className="bg-white p-6 rounded-[40px] border border-slate-100 shadow-inner mb-8">
                 {settings && (
                   <img 
                     src={`https://img.vietqr.io/image/${settings.bankCode || 'ICB'}-${settings.bankAccount || '0000'}-compact2.png?amount=${total}&addInfo=${encodeURIComponent(`TT ${orderCode} ${selectedTable?.name || ''}`)}&accountName=${encodeURIComponent(settings.bankAccountHolder || '')}`}
                     alt="VietQR"
-                    className="w-64 h-auto rounded-3xl shadow-2xl mx-auto border-4 border-white dark:border-slate-900"
+                    className="w-64 h-auto rounded-3xl shadow-2xl mx-auto border-4 border-white"
                   />
                 )}
               </div>
 
               <div className="w-full space-y-2 mb-8 text-left">
-                <div className="flex justify-between items-center p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl border border-emerald-100 dark:border-emerald-500/20">
-                  <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest italic">Order Key</span>
-                  <span className="text-sm font-black text-emerald-700 dark:text-emerald-300 tracking-widest">{orderCode}</span>
+                <div className="flex justify-between items-center p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                  <span className="text-xs font-black text-emerald-600 uppercase tracking-widest italic">Order Key</span>
+                  <span className="text-sm font-black text-emerald-700 tracking-widest">{orderCode}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
-                   <div className="flex justify-between items-center px-4 py-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                   <div className="flex justify-between items-center px-4 py-3 bg-slate-50 rounded-xl">
                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Account</span>
-                      <span className="text-[11px] font-black text-slate-900 dark:text-slate-100 uppercase">{settings?.bankAccountHolder}</span>
+                      <span className="text-[11px] font-black text-slate-900 uppercase">{settings?.bankAccountHolder}</span>
                    </div>
-                   <div className="flex justify-between items-center px-4 py-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                   <div className="flex justify-between items-center px-4 py-3 bg-slate-50 rounded-xl">
                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Number</span>
-                      <span className="text-xs font-black text-slate-900 dark:text-slate-100 font-mono italic">{settings?.bankAccount}</span>
+                      <span className="text-xs font-black text-slate-900 font-mono italic">{settings?.bankAccount}</span>
                    </div>
                 </div>
               </div>
@@ -1543,13 +1536,13 @@ const POSPage = () => {
 
       {/* Shift Closing Warning Dialog */}
       <Dialog open={showShiftWarning} onOpenChange={setShowShiftWarning}>
-        <DialogContent className="sm:max-w-[400px] p-8 dark:bg-slate-900 rounded-[40px] border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[400px] p-8 rounded-[40px] border-none shadow-2xl">
           <div className="flex flex-col items-center text-center">
-            <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/10 rounded-3xl flex items-center justify-center mb-8">
+            <div className="w-20 h-20 bg-amber-100 rounded-3xl flex items-center justify-center mb-8">
               <CircleDollarSign className="text-amber-600 w-10 h-10" />
             </div>
-            <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tighter uppercase italic">Cảnh báo bàn đang phục vụ</DialogTitle>
-            <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium mb-10 leading-relaxed text-sm">
+            <DialogTitle className="text-2xl font-black text-slate-900 mb-4 tracking-tighter uppercase italic">Cảnh báo bàn đang phục vụ</DialogTitle>
+            <DialogDescription className="text-slate-500 font-medium mb-10 leading-relaxed text-sm">
               Hiện vẫn còn <span className="text-rose-600 font-black">{getActiveTables().length} bàn</span> đang có khách hoặc chưa thanh toán. Nhân viên ca sau sẽ tiếp quản các bàn này. Bạn vẫn muốn chốt ca?
             </DialogDescription>
             <div className="w-full space-y-4">
@@ -1559,14 +1552,14 @@ const POSPage = () => {
                   await fetchShiftSummary();
                   setShowCloseShiftModal(true);
                 }}
-                className="w-full h-14 bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-600 dark:hover:bg-emerald-400 transition-all shadow-lg"
+                className="w-full h-14 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg"
               >
                 Tiếp tục chốt ca
               </Button>
               <Button 
                 variant="ghost"
                 onClick={() => setShowShiftWarning(false)}
-                className="w-full h-14 text-slate-400 dark:text-slate-600 font-black uppercase tracking-widest hover:text-slate-900 dark:hover:text-white"
+                className="w-full h-14 text-slate-400 font-black uppercase tracking-widest hover:text-slate-900"
               >
                 Quay lại kiểm tra
               </Button>
@@ -1577,13 +1570,13 @@ const POSPage = () => {
 
       {/* Note Selection Dialog */}
       <Dialog open={showNoteModal} onOpenChange={setShowNoteModal}>
-        <DialogContent className="sm:max-w-[440px] p-8 dark:bg-slate-900 rounded-[40px] border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[440px] p-8 rounded-[40px] border-none shadow-2xl">
           <DialogHeader className="mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
                 <StickyNote size={20} />
               </div>
-              <DialogTitle className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">Ghi chú món</DialogTitle>
+              <DialogTitle className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Ghi chú món</DialogTitle>
             </div>
           </DialogHeader>
 
@@ -1597,7 +1590,7 @@ const POSPage = () => {
                     "p-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border",
                     tempNote.includes(note)
                       ? "bg-emerald-600 text-white border-emerald-600"
-                      : "bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700"
+                      : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300"
                   )}
                 >
                   {note}
@@ -1606,12 +1599,12 @@ const POSPage = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">Ghi chú khác</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Ghi chú khác</label>
               <textarea
                 value={tempNote}
                 onChange={(e) => setTempNote(e.target.value)}
                 placeholder="Nhập yêu cầu đặc biệt..."
-                className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[100px] shadow-inner"
+                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-3xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[100px] shadow-inner"
               />
             </div>
 
@@ -1627,36 +1620,36 @@ const POSPage = () => {
 
       {/* Custom Item Dialog */}
       <Dialog open={showCustomItemModal} onOpenChange={setShowCustomItemModal}>
-        <DialogContent className="sm:max-w-[440px] p-8 dark:bg-slate-900 rounded-[40px] border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[440px] p-8 rounded-[40px] border-none shadow-2xl">
           <DialogHeader className="mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
                 <Plus size={20} />
               </div>
-              <DialogTitle className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">Món ngoài menu</DialogTitle>
+              <DialogTitle className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Món ngoài menu</DialogTitle>
             </div>
           </DialogHeader>
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">Tên món</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Tên món</label>
               <Input
                 type="text"
                 value={customItem.name}
                 onChange={(e) => setCustomItem({ ...customItem, name: e.target.value })}
                 placeholder="Ví dụ: Nước sâm đặc biệt"
-                className="h-14 px-6 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-900 dark:text-white focus-visible:ring-emerald-500"
+                className="h-14 px-6 bg-slate-50 border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus-visible:ring-emerald-500"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">Giá tiền (VNĐ)</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Giá tiền (VNĐ)</label>
               <Input
                 type="number"
                 value={customItem.price}
                 onChange={(e) => setCustomItem({ ...customItem, price: e.target.value })}
                 placeholder="25000"
-                className="h-14 px-6 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-900 dark:text-white focus-visible:ring-emerald-500"
+                className="h-14 px-6 bg-slate-50 border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus-visible:ring-emerald-500"
               />
             </div>
 
@@ -1674,52 +1667,52 @@ const POSPage = () => {
       {/* Close Shift Dialog */}
       <Dialog open={showCloseShiftModal} onOpenChange={(open) => !closing && setShowCloseShiftModal(open)}>
         <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden border-none rounded-[48px] shadow-2xl">
-          <div className="p-10 dark:bg-slate-900">
+          <div className="p-10">
              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-rose-100 dark:bg-rose-500/10 rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center">
                    <LogOut className="text-rose-600 w-6 h-6" />
                  </div>
                  <div>
-                    <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic">Chốt ca bán hàng</h3>
-                    <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Tổng kết doanh thu và tiền mặt</p>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase italic">Chốt ca bán hàng</h3>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">Tổng kết doanh thu và tiền mặt</p>
                  </div>
               </div>
 
               <div className="space-y-6">
-                <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-[32px] space-y-4 border border-slate-100 dark:border-slate-800 shadow-inner">
+                <div className="bg-slate-50 p-6 rounded-[32px] space-y-4 border border-slate-100 shadow-inner">
                   {shiftSummary && (
                     <div className="space-y-3 mb-6">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">Tiền đầu ca</span>
-                        <span className="font-black text-slate-700 dark:text-slate-300 font-mono">{shiftSummary.openingBalance.toLocaleString('vi-VN')}đ</span>
+                        <span className="text-slate-400 font-bold uppercase tracking-widest">Tiền đầu ca</span>
+                        <span className="font-black text-slate-700 font-mono">{shiftSummary.openingBalance.toLocaleString('vi-VN')}đ</span>
                       </div>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">Doanh thu Tiền mặt</span>
-                        <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">+{shiftSummary.cashSales.toLocaleString('vi-VN')}đ</span>
+                        <span className="text-slate-400 font-bold uppercase tracking-widest">Doanh thu Tiền mặt</span>
+                        <span className="font-black text-emerald-600 font-mono">+{shiftSummary.cashSales.toLocaleString('vi-VN')}đ</span>
                       </div>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">Doanh thu CK</span>
-                        <span className="font-black text-blue-600 dark:text-blue-400 font-mono">+{shiftSummary.transferSales.toLocaleString('vi-VN')}đ</span>
+                        <span className="text-slate-400 font-bold uppercase tracking-widest">Doanh thu CK</span>
+                        <span className="font-black text-blue-600 font-mono">+{shiftSummary.transferSales.toLocaleString('vi-VN')}đ</span>
                       </div>
-                      <div className="h-px bg-slate-200 dark:bg-slate-800" />
+                      <div className="h-px bg-slate-200" />
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Hệ thống tính</span>
-                        <span className="text-lg font-black text-slate-900 dark:text-white font-mono">{shiftSummary.expectedBalance.toLocaleString('vi-VN')}đ</span>
+                        <span className="text-xs font-black text-slate-900 uppercase tracking-tight">Hệ thống tính</span>
+                        <span className="text-lg font-black text-slate-900 font-mono">{shiftSummary.expectedBalance.toLocaleString('vi-VN')}đ</span>
                       </div>
                     </div>
                   )}
 
                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">Tiền mặt thực tế (Quầy)</label>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Tiền mặt thực tế (Quầy)</label>
                      <div className="relative">
                         <Input 
                           type="number"
                           value={closingBalance}
                           onChange={(e) => setClosingBalance(Number(e.target.value))}
-                          className="h-16 bg-white dark:bg-slate-900 rounded-2xl border-slate-200 dark:border-slate-800 text-2xl font-black text-slate-900 dark:text-white text-center focus-visible:ring-rose-500 shadow-sm"
+                          className="h-16 bg-white rounded-2xl border-slate-200 text-2xl font-black text-slate-900 text-center focus-visible:ring-rose-500 shadow-sm"
                           placeholder="0"
                         />
-                        <span className="absolute top-1/2 -translate-y-1/2 left-6 text-slate-300 dark:text-slate-700 font-black">đ</span>
+                        <span className="absolute top-1/2 -translate-y-1/2 left-6 text-slate-300 font-black">đ</span>
                      </div>
                   </div>
 
@@ -1729,20 +1722,20 @@ const POSPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       className="space-y-4 pt-2"
                     >
-                      <div className="flex justify-between items-center p-4 bg-rose-50 dark:bg-rose-500/5 rounded-2xl border border-rose-100 dark:border-rose-500/20 italic">
-                        <span className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">Chênh lệch:</span>
-                        <span className="text-lg font-black text-rose-600 dark:text-rose-400 font-mono">
+                      <div className="flex justify-between items-center p-4 bg-rose-50 rounded-2xl border border-rose-100 italic">
+                        <span className="text-xs font-black text-rose-600 uppercase tracking-widest">Chênh lệch:</span>
+                        <span className="text-lg font-black text-rose-600 font-mono">
                           {(closingBalance - shiftSummary.expectedBalance).toLocaleString('vi-VN')}đ
                         </span>
                       </div>
                       
                       <div className="space-y-2">
-                        <label className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest px-2">Giải trình (Bắt buộc)</label>
+                        <label className="text-xs font-black text-rose-600 uppercase tracking-widest px-2">Giải trình (Bắt buộc)</label>
                         <textarea 
                           value={shiftNotes}
                           onChange={(e) => setShiftNotes(e.target.value)}
                           placeholder="Lý do chênh lệch..."
-                          className="w-full p-4 bg-white dark:bg-slate-900 rounded-2xl border border-rose-100 dark:border-rose-500/20 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-900 dark:text-white min-h-[100px] shadow-sm resize-none"
+                          className="w-full p-4 bg-white rounded-2xl border border-rose-100 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-rose-500 text-slate-900 min-h-[100px] shadow-sm resize-none"
                         />
                       </div>
                     </motion.div>
@@ -1767,7 +1760,7 @@ const POSPage = () => {
                   <Button 
                     variant="ghost" 
                     onClick={() => setShowCloseShiftModal(false)}
-                    className="w-full h-12 text-slate-400 dark:text-slate-600 font-black uppercase tracking-widest hover:text-slate-900 dark:hover:text-white"
+                    className="w-full h-12 text-slate-400 font-black uppercase tracking-widest hover:text-slate-900"
                   >
                     Huỷ bỏ
                   </Button>
