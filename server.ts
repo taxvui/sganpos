@@ -315,22 +315,30 @@ async function startServer() {
   // Connect to Database
   let dbConnected = false;
   try {
-    await dbConnect();
-    dbConnected = true;
-  } catch (err) {
-    console.error('❌ CRITICAL ERROR: Could NOT connect to MongoDB. Server starting in limited mode.', err);
-    // In many apps we might want to process.exit(1) here, 
-    // but in a dev environment we might want the server to stay up to show the error page.
+    if (!process.env.MONGODB_URI) {
+      console.warn('⚠️ WARNING: MONGODB_URI environment variable is not set.');
+      console.warn('⚠️ Database connection will be unavailable. Please set MONGODB_URI to enable database features.');
+    } else {
+      await dbConnect();
+      dbConnected = true;
+    }
+  } catch (err: any) {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    console.warn('⚠️ Server continuing without database connection. API routes may fail.');
   }
 
   // Run Database Migration/Seed
   if (dbConnected) {
-    await runMigration();
+    try {
+      await runMigration();
+    } catch (migrationErr: any) {
+      console.error('⚠️ Migration warning (non-critical):', migrationErr.message);
+    }
   } else {
     console.warn('⚠️ Skipping Migration/Sync: Database not connected.');
   }
 
-  // Vite integration
+  // Vite integration (development only)
   if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -346,7 +354,7 @@ async function startServer() {
       if (url.startsWith('/api') || url.includes('.')) {
         return next();
       }
-
+      
       try {
         const fs = await import('fs');
         const templateFile = path.resolve(process.cwd(), 'index.html');
@@ -393,21 +401,32 @@ async function startServer() {
     });
   }
 
-  // Start the server (works on localhost, Docker, Vercel, VPS, etc.)
-  const server = httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-  
-  // Graceful shutdown
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully...');
-    server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
+  // Only start the HTTP server in non-serverless environments
+  if (!process.env.VERCEL) {
+    const server = httpServer.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
-  });
+    
+    // Graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully...');
+      server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+      });
+    });
+  } else {
+    console.log('[Server] Running on Vercel serverless environment');
+  }
 }
 
-startServer();
+// Initialize server on startup
+startServer().catch(err => {
+  console.error('[Server] Initialization error:', err.message);
+  console.log('[Server] Server will continue running in limited mode');
+  // Don't exit - let the server continue and serve what it can
+  // This is important for Vercel serverless where we can't restart
+});
 
+// Export for Vercel serverless and local HTTP server
 export default app;
