@@ -360,32 +360,33 @@ async function startServer() {
       }
     });
   } else {
-    // Serve static files for production (works on Vercel, Docker, VPS, etc.)
+    // Serve static files (works on localhost, Docker, Vercel, VPS)
     const distPath = path.join(__dirname, 'dist');
     app.use(express.static(distPath, {
       maxAge: '1y',
       etag: false
     }));
     
-    // SPA fallback: serve index.html for all non-API routes
+    // SPA fallback: serve index.html for all non-API, non-asset routes
     app.get('*', (req, res) => {
       const url = req.originalUrl;
       
-      // Skip API routes and asset files
+      // Skip API routes - let them 404
       if (url.startsWith('/api')) {
         return res.status(404).json({ error: 'Not found' });
       }
       
-      // Skip files with extensions (except .html)
-      if (url.includes('.') && !url.endsWith('.html')) {
+      // Skip actual asset files (.js, .css, .png, etc)
+      // These should be served by express.static above
+      if (url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i)) {
         return res.status(404).send('Not found');
       }
       
-      // Serve index.html for all SPA routes
+      // Serve index.html for all other routes (SPA)
       const indexPath = path.join(distPath, 'index.html');
       res.sendFile(indexPath, (err) => {
         if (err) {
-          console.error('Error serving index.html:', err);
+          console.error('[v0] Error serving index.html:', err);
           res.status(404).send('Not found');
         }
       });
