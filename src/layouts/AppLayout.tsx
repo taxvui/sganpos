@@ -78,44 +78,44 @@ const AppLayout = () => {
     return (
       <IonPage>
         <IonContent>
-          <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] shadow-primary" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px] shadow-blue-500" />
+          <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 text-center overflow-hidden relative">
+            <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[100px]" />
+            <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[100px]" />
             
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 flex flex-col items-center"
+              className="relative z-10 flex flex-col items-center w-full max-w-2xl"
             >
-              <Logo size="xl" className="mb-8" />
-              <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-tight mb-8">
+              <Logo size="lg" className="mb-6 sm:mb-8 shrink-0" />
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-foreground tracking-tight leading-tight mb-4 sm:mb-6 lg:mb-8">
                 Quản lý vận hành <br/> 
                 <span className="text-primary">với đẳng cấp mới</span>
               </h1>
-              <p className="text-muted-foreground text-sm sm:text-lg font-medium max-w-xl mb-12 mx-auto leading-relaxed">
+              <p className="text-muted-foreground text-sm sm:text-base lg:text-lg font-medium max-w-xl mb-8 sm:mb-10 lg:mb-12 mx-auto leading-relaxed px-2">
                 Hệ sinh thái thông minh chuyên biệt cho chuỗi cà phê & nhà hàng hiện đại. 
                 Tối ưu quy trình, bứt phá doanh thu.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-lg">
-                <Button size="lg" className="h-16 px-12 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 group" asChild>
-                  <Link to="/login">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center w-full max-w-md px-2">
+                <Button size="lg" className="h-12 sm:h-14 px-6 sm:px-12 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl shadow-xl shadow-primary/20 group w-full sm:w-auto" asChild>
+                  <Link to="/login" className="flex items-center justify-center">
                     Truy cập hệ thống
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-2 w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 {!fromHostname && (
-                  <Button size="lg" variant="outline" className="h-16 px-12 text-lg font-bold rounded-2xl" asChild>
+                  <Button size="lg" variant="outline" className="h-12 sm:h-14 px-6 sm:px-12 text-base sm:text-lg font-bold rounded-xl sm:rounded-2xl w-full sm:w-auto" asChild>
                     <Link to="/register">
                       Mở chi nhánh mới
                     </Link>
                   </Button>
                 )}
               </div>
-              <div className="mt-24 pt-10 border-t border-border/50 flex flex-wrap justify-center gap-12 opacity-50 items-center">
-                <span className="font-black tracking-tighter text-2xl text-slate-800">MONDAY.COM.VN</span>
-                <div className="w-1.5 h-1.5 bg-muted-foreground/30 rounded-full" />
-                <span className="font-bold text-sm uppercase tracking-widest text-muted-foreground">Professional POS Solutions</span>
+              <div className="mt-12 sm:mt-16 lg:mt-20 pt-8 sm:pt-10 border-t border-border/50 flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-8 opacity-50 items-center text-xs sm:text-sm">
+                <span className="font-black tracking-tighter text-lg sm:text-xl lg:text-2xl text-slate-800">MONDAY.COM.VN</span>
+                <div className="hidden sm:block w-1.5 h-1.5 bg-muted-foreground/30 rounded-full" />
+                <span className="font-bold uppercase tracking-widest text-muted-foreground">Professional POS Solutions</span>
               </div>
             </motion.div>
           </div>
@@ -160,18 +160,18 @@ const AppLayout = () => {
   });
 
   const SidebarContent = ({ className }: { className?: string }) => (
-    <div className={cn("flex flex-col h-full bg-card border-r border-border/50 shadow-sm", className)}>
-      <div className="p-6">
+    <div className={cn("flex flex-col h-full bg-card shadow-sm", className)}>
+      <div className="p-4 sm:p-6 shrink-0">
         <Link to={`${tenantPrefix}/`} className="flex items-center gap-3 group">
-          <Logo variant="icon" size="md" className="group-hover:scale-110 transition-transform" />
-          <div className="flex flex-col">
-            <span className="font-black text-base tracking-tight leading-none">SAIGON AN</span>
-            <span className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Coffee & Tea</span>
+          <Logo variant="icon" size="md" className="group-hover:scale-110 transition-transform shrink-0" />
+          <div className="flex flex-col min-w-0">
+            <span className="font-black text-sm sm:text-base tracking-tight leading-none truncate">SAIGON AN</span>
+            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted-foreground font-bold">Coffee & Tea</span>
           </div>
         </Link>
       </div>
       
-      <ScrollArea className="flex-1 px-4">
+      <ScrollArea className="flex-1 px-3 sm:px-4">
         <nav className="flex flex-col gap-1 py-4">
           {navItems.map((item) => {
             const isActive = (location.pathname === item.to || (item.to === `${tenantPrefix}/` && (location.pathname === tenantPrefix || location.pathname === `${tenantPrefix}/`)));
@@ -181,16 +181,16 @@ const AppLayout = () => {
                 to={item.to} 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",
+                  "flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-all duration-200 group relative",
                   isActive 
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" 
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 )}
               >
-                <item.icon className={cn("w-5 h-5", isActive ? "animate-pulse" : "group-hover:scale-110 transition-transform")} />
-                <span className="font-semibold text-sm">{item.label}</span>
+                <item.icon className={cn("w-5 h-5 shrink-0", isActive ? "animate-pulse" : "group-hover:scale-110 transition-transform")} />
+                <span className="font-semibold text-xs sm:text-sm truncate">{item.label}</span>
                 {item.badge && (
-                  <Badge variant="destructive" className="ml-auto flex h-5 w-5 items-center justify-center rounded-full p-0 text-[10px]">
+                  <Badge variant="destructive" className="ml-auto flex h-4 sm:h-5 w-4 sm:w-5 items-center justify-center rounded-full p-0 text-[8px] sm:text-[10px] shrink-0">
                     !
                   </Badge>
                 )}
@@ -207,14 +207,14 @@ const AppLayout = () => {
         </nav>
       </ScrollArea>
 
-      <div className="p-4 mt-auto border-t border-border/50">
-        <div className="bg-muted/50 rounded-2xl p-4 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/10">
-            <User className="w-5 h-5" />
+      <div className="p-3 sm:p-4 mt-auto border-t border-border/50 shrink-0">
+        <div className="bg-muted/50 rounded-lg sm:rounded-2xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
+          <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/10 shrink-0">
+            <User className="w-4 sm:w-5 h-4 sm:h-5" />
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="font-bold text-sm truncate">{user?.fullName || user?.username}</span>
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{user?.role}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="font-bold text-xs sm:text-sm truncate">{user?.fullName || user?.username}</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider truncate">{user?.role}</span>
           </div>
           <Button 
             variant="ghost" 
@@ -223,7 +223,7 @@ const AppLayout = () => {
               logout();
               navigate('/login');
             }}
-            className="ml-auto text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0 h-8 sm:h-9 w-8 sm:w-9"
           >
             <LogOut className="w-4 h-4" />
           </Button>
@@ -233,54 +233,57 @@ const AppLayout = () => {
   );
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden selection:bg-primary/20">
+    <div className="flex flex-col lg:flex-row h-screen bg-background overflow-hidden selection:bg-primary/20 w-full">
       <PrintService />
       
+      {/* Desktop Sidebar */}
       {!isCustomerPage && !isDevelopPage && (
-        <SidebarContent className="hidden lg:flex w-72 shrink-0" />
+        <SidebarContent className="hidden lg:flex w-72 shrink-0 border-r border-border/50" />
       )}
 
-      <div className="flex-1 flex flex-col min-w-0 relative">
-        <header className="h-16 lg:h-20 flex items-center justify-between px-6 bg-background/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-40">
-          <div className="flex items-center gap-4">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 relative w-full overflow-hidden">
+        {/* Header */}
+        <header className="h-14 sm:h-16 lg:h-20 flex items-center justify-between px-3 sm:px-4 lg:px-6 bg-background/80 backdrop-blur-md border-b border-border/50 shrink-0 z-40">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
             {!isCustomerPage && !isDevelopPage && (
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="lg:hidden">
-                    <Menu className="w-6 h-6" />
+                  <Button variant="ghost" size="icon" className="lg:hidden shrink-0 h-9 w-9 sm:h-10 sm:w-10">
+                    <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 border-r-0 w-72">
+                <SheetContent side="left" className="p-0 border-r-0 w-64 sm:w-72">
                   <SidebarContent className="border-r-0" />
                 </SheetContent>
               </Sheet>
             )}
-            <h2 className="hidden sm:block font-extrabold text-lg lg:text-xl tracking-tighter text-foreground/90">
+            <h2 className="text-sm sm:text-base lg:text-lg font-extrabold tracking-tighter text-foreground/90 truncate">
               {navItems.find(item => item.to === location.pathname)?.label || 'Bảng điều khiển'}
             </h2>
             {location.pathname.includes('/kitchen') && hasNewOrder && (
-              <Badge variant="destructive" className="animate-bounce">Có đơn hàng mới!</Badge>
+              <Badge variant="destructive" className="animate-bounce text-xs sm:text-sm shrink-0">Có đơn hàng mới!</Badge>
             )}
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" className="rounded-full relative">
-              <Bell className="w-5 h-5 text-muted-foreground" />
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <Button variant="outline" size="icon" className="rounded-full relative h-9 w-9 sm:h-10 sm:w-10">
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full border-2 border-background" />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 p-0 overflow-hidden border border-border">
-                  <div className="h-full w-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 sm:h-10 sm:w-10 p-0 overflow-hidden border border-border shrink-0">
+                  <div className="h-full w-full bg-primary/10 flex items-center justify-center text-primary text-xs sm:text-sm font-bold">
                     {user?.username?.charAt(0).toUpperCase()}
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-xl">
+              <DropdownMenuContent align="end" className="w-48 sm:w-56 rounded-xl text-sm sm:text-base">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none">{user?.fullName || user?.username}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                    <p className="text-xs sm:text-sm font-bold leading-none truncate">{user?.fullName || user?.username}</p>
+                    <p className="text-[10px] sm:text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -298,8 +301,9 @@ const AppLayout = () => {
           </div>
         </header>
 
-        <main className="flex-1 relative bg-muted/30 p-4 lg:p-6 overflow-hidden">
-          <div className="max-w-[1920px] mx-auto h-full relative">
+        {/* Main Content */}
+        <main className="flex-1 relative bg-muted/30 p-2 sm:p-4 lg:p-6 overflow-y-auto overflow-x-hidden w-full">
+          <div className="max-w-[1920px] mx-auto w-full h-full relative">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={location.pathname} 
@@ -307,7 +311,7 @@ const AppLayout = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }} 
                 exit={{ opacity: 0, scale: 0.99, y: -4 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="min-h-full"
+                className="w-full h-full min-h-full"
               >
                 <Routes>
                   <Route path={`${tenantPrefix}`}>
