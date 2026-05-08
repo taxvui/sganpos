@@ -359,28 +359,52 @@ async function startServer() {
         next(e);
       }
     });
-  } else if (!process.env.VERCEL) {
-    // Only serve static files if NOT on Vercel (e.g. Docker, manual VPS)
-    // On Vercel, we let Vercel framework serve the dist folder.
+  } else {
+    // Serve static files for production (works on Vercel, Docker, VPS, etc.)
     const distPath = path.join(__dirname, 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      maxAge: '1y',
+      etag: false
+    }));
+    
+    // SPA fallback: serve index.html for all non-API routes
     app.get('*', (req, res) => {
       const url = req.originalUrl;
-      // If it's a request for an asset that we didn't serve via express.static above,
-      // we should return a 404 instead of index.html to prevent MIME type issues.
-      if (url.includes('.') || url.startsWith('/assets/')) {
+      
+      // Skip API routes and asset files
+      if (url.startsWith('/api')) {
+        return res.status(404).json({ error: 'Not found' });
+      }
+      
+      // Skip files with extensions (except .html)
+      if (url.includes('.') && !url.endsWith('.html')) {
         return res.status(404).send('Not found');
       }
+      
+      // Serve index.html for all SPA routes
       const indexPath = path.join(distPath, 'index.html');
-      res.sendFile(indexPath);
+      res.sendFile(indexPath, (err) => {
+        if (err) {
+          console.error('Error serving index.html:', err);
+          res.status(404).send('Not found');
+        }
+      });
     });
   }
 
-  if (!process.env.VERCEL) {
-    httpServer.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+  // Start the server (works on localhost, Docker, Vercel, VPS, etc.)
+  const server = httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+  
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down gracefully...');
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
     });
-  }
+  });
 }
 
 startServer();
